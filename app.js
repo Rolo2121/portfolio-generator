@@ -1,17 +1,9 @@
-const inquirer = require('inquirer');
 const fs = require('fs');
+const inquirer = require('inquirer');
 const generatePage = require('./src/page-template');
 
-// const pageHTML = generatePage(name, github);
 
-
-fs.writeFile('./index.html', pageHTML, err => {
-    if (err) throw new Error(err);
-
-//     console.log('Portfolio complete! Check out index.html to see the output!');
-});
-
-printProfileData(profileDataArgs);
+// printProfileData(profileDataArgs);
 
 const promptUser = () => {
     return inquirer.prompt([
@@ -51,14 +43,8 @@ const promptUser = () => {
             type: 'input',
             name: 'about',
             message: 'Provide some information about yourself:',
-            when: ({ confirmAbout }) => {
-                if (confirmAbout) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
+            when: ({ confirmAbout }) => confirmAbout
+        }       
     ]);
 };
 
@@ -73,7 +59,8 @@ const promptProject = portfolioData => {
 if (!portfolioData.projects) {
     portfolioData.projects = [];
   }
-    return inquirer.prompt([
+    return inquirer
+        .prompt([
         {
             type: 'input',
             name: 'name',
@@ -85,8 +72,7 @@ if (!portfolioData.projects) {
                     console.log('Please enter your project name!');
                     return false;
                 }
-            }
-            
+            } 
         },
         {
             type: 'input',
@@ -146,11 +132,13 @@ if (!portfolioData.projects) {
 promptUser()
     .then(promptProject)
     .then(portfolioData => {
-         const pageHTML = generatePage(mockData);
+         const pageHTML = generatePage(portfolioData);
 
-        // fs.writeFile('./index.html', pageHTML, err => {
-        //   if (err) throw new Error(err);
+        fs.writeFile('./index.html', pageHTML, err => {
+          if (err) throw new Error(err);
 
-        //   console.log('Page created! Check out index.html in this directory to see it!');
-        // });
+          console.log('Page created! Check out index.html in this directory to see it!');
+        });
     });
+
+    
